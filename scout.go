@@ -1,22 +1,35 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
 
-	"golang.org/x/crypto/ssh"
+	"github.com/OmairK/scout/internals"
 )
 
 func main() {
-	/*
-		An SSH client is represented with a ClientConn.
-		To authenticate with the remote server you must pass at least one
-		implementation of AuthMethod via the Auth field in ClientConfig,
-		and provide a HostKeyCallback.
-	*/
-	key, err := ioutil.ReadFile("openvpn.pem")
+	configMap, err := internals.ConfigParser()
+	if err != nil {
+		log.Fatalf("error %v", err)
+	}
+	var hostChoice int
+	for index, configs := range configMap {
+		fmt.Printf("%v %v\n", index, configs.Host)
+	}
+	fmt.Scanln(&hostChoice)
+
+	if hostChoice < 0 && hostChoice >= len(configMap) {
+		fmt.Println("Invalid input")
+		return
+	}
+}
+
+/*
+// An SSH client is represented with a ClientConn.
+		// To authenticate with the remote server you must pass at least one
+		// implementation of AuthMethod via the Auth field in ClientConfig,
+		// and provide a HostKeyCallback.
+key, err := ioutil.ReadFile("openvpn.pem")
 	if err != nil {
 		log.Fatalf("unable to read private key: %v", err)
 	}
@@ -55,5 +68,4 @@ func main() {
 		}
 		fmt.Println(b.String())
 	}
-
-}
+*/
